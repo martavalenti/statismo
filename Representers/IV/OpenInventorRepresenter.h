@@ -55,17 +55,14 @@
  */
  //RB: would it be possible to make all representers inherit from it, so as to strictly enforce the interface?
 
-#include <Inventor/nodes/SoCoordinate3.h>
-#include <Inventor/actions/SoSearchAction.h>
-#include <Inventor/nodes/SoSeparator.h>
-#include <Inventor/nodes/SoIndexedFaceSet.h>
-#include <Inventor/nodes/SoShape.h>
+#include "OpenInventorUtils.h"
+
 #include <string>
 #include <statismo/Domain.h>
 #include <statismo/CommonTypes.h>
 #include <H5Cpp.h>
 
-class OpenInventorRepresenter {
+class OpenInventorRepresenter{
 public:
 
 	/**
@@ -75,10 +72,10 @@ public:
 
 	/// Defines (a pointer to) the type of the dataset that is represented.
 	/// This could either be a naked pointer or a smart pointer.
-	typedef SoShape* DatasetPointerType;
+	typedef OpenInventorUtils::IVStruct* DatasetPointerType;
 
 	/// Defines the const pointer type o fthe datset that is represented
-	typedef const SoShape* DatasetConstPointerType;
+	typedef const OpenInventorUtils::IVStruct* DatasetConstPointerType;
 
 	/// Defines the pointtype of the dataset
 	typedef SbVec3f PointType;
@@ -105,6 +102,10 @@ public:
 	 * \name Object creation and destruction
 	 */
 	///@{
+
+	static OpenInventorRepresenter* Create() {
+		return new OpenInventorRepresenter();
+	}
 
 	/** Creates a new representer object, with the
 	 * the information defined inthe given hdf5 group
@@ -218,6 +219,12 @@ public:
 	void Save(const H5::CommonFG& fg);
 
 	///@}
+
+private:
+
+	static DatasetPointerType ReadDataset(const std::string& filename);
+	static void WriteDataset(const std::string& filename, DatasetConstPointerType pd);
+
 };
 
 
