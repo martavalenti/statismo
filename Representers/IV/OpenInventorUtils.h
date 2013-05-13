@@ -11,12 +11,18 @@
 class OpenInventorUtils{
 public:
 
-	typedef struct IVStruct {
-		SoCoordinate3		points;
-		SoIndexedFaceSet	faces;
-	};
+	//typedef struct IVStruct {
+		std::vector< SbVec3f >  m_points ;
+		std::vector< std::vector< int32_t>> m_faces;
+		/*SoCoordinate3		points;
+		SoIndexedFaceSet	faces;*/
+		unsigned int		n_points;
+	//};
 
-	unsigned int GetNumberOfPoints();
+	unsigned int GetNumberOfPoints( return n_points;);
+
+	void ReadIVFile (std::string FileName);
+
 }
 
 #endif
