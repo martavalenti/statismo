@@ -84,7 +84,7 @@ inline
 OpenInventorRepresenter::DatasetPointerType
 OpenInventorRepresenter::DatasetToSample(DatasetConstPointerType _pd, DatasetInfo* notUsed) const
 {
-	assert(m_reference != 0);
+	/*assert(m_reference != 0);
 
 	vtkPolyData* reference = const_cast<vtkPolyData*>(this->m_reference);
 	vtkPolyData* pd = const_cast<vtkPolyData*>(_pd);
@@ -116,6 +116,8 @@ OpenInventorRepresenter::DatasetToSample(DatasetConstPointerType _pd, DatasetInf
 		alignedPd->DeepCopy(pd);
 	}
 
+*/	
+	alignedPd = _pd;
 	return alignedPd;
 }
 

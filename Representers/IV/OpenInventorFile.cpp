@@ -7,10 +7,10 @@
 #include <vector>
 #include <iostream>
 #include <fstream>
-#include "openinventorutils.h"
+#include "openinventorfile.h"
 
 void
-OpenInventorUtils::ReadIVFile(std::string FileName)
+OpenInventorFile::ReadIVFile(std::string FileName)
 {
 	std::vector< SbVec3f >  OutPoint ;
 	std::vector< std::vector< int32_t>> OutFace;
@@ -72,7 +72,7 @@ OpenInventorUtils::ReadIVFile(std::string FileName)
  
       // assign it
       OutPoint = SurfacePoints;
-	  OpenInventorUtils::m_points = SurfacePoints;
+	  OpenInventorUtils::IVStruct.m_points = SurfacePoints;
 
 	  //search for faces
 	  SoIndexedFaceSet *myIndexFace;
@@ -116,7 +116,7 @@ OpenInventorUtils::ReadIVFile(std::string FileName)
 				SingleFace.clear();
 			}
 //			aMeshesElements.push_back(Faces);
-			OpenInventorUtils::m_faces.push_back(Faces);
+			OpenInventorUtils::IVStruct.m_faces.push_back(Faces);
       }
 	}
 	}

@@ -36,27 +36,22 @@
  */
 
 
-#include "itkVectorImageRepresenter.h"
-#include "itkMeshRepresenter.h"
-#include "statismo_ITK/itkStatisticalModel.h"
-#include "statismo_ITK/itkPCAModelBuilder.h"
-#include "statismo_ITK/itkDataManager.h"
-#include "itkDirectory.h"
-#include "itkMesh.h"
-#include "itkMeshFileWriter.h"
-#include "itkMeshFileReader.h"
+
 #include <sys/types.h>
 #include <errno.h>
 #include <iostream>
+#include "OpenInventorRepresenter.h"
 
+#include "statismo/PCAModelBuilder.h"
+#include "statismo/StatisticalModel.h"
+#include "statismo/DataManager.h"
+
+#include <memory>
+using namespace statismo;
+using std::auto_ptr;
 /*
  * This example shows the ITK Wrapping of statismo can be used to build a shape model.
  */
-
-const unsigned Dimensions = 3;
-typedef itk::Mesh<float, Dimensions  > MeshType;
-
-typedef itk::MeshRepresenter<float, Dimensions> RepresenterType;
 
 
 /*function... might want it in some class?*/
@@ -77,59 +72,74 @@ int getdir (std::string dir, std::vector<std::string> &files, const std::string&
 
 
 
-void buildShapeModel(const char* referenceFilename, const char* dir, const char* modelname) {
+int main(int argc, char** argv) {
 
-
-	typedef itk::PCAModelBuilder<RepresenterType> ModelBuilderType;
-	typedef itk::StatisticalModel<RepresenterType> StatisticalModelType;
-    typedef std::vector<std::string> StringVectorType;
-    typedef itk::DataManager<RepresenterType> DataManagerType;
-    typedef itk::MeshFileReader<MeshType> MeshReaderType;
-
-    RepresenterType::Pointer representer = RepresenterType::New();
-
-    MeshReaderType::Pointer refReader = MeshReaderType::New();
-    refReader->SetFileName(referenceFilename);
-    refReader->Update();
-    representer->SetReference(refReader->GetOutput());
-
-    StringVectorType filenames;
-    getdir(dir, filenames, ".vtk");
-
-    DataManagerType::Pointer dataManager = DataManagerType::New();
-    dataManager->SetRepresenter(representer);
-
-    for (StringVectorType::const_iterator it = filenames.begin(); it != filenames.end(); it++) {
-        std::string fullpath = (std::string(dir) + "/") + *it;
-
-        MeshReaderType::Pointer reader = MeshReaderType::New();
-        reader->SetFileName(fullpath.c_str());
-        reader->Update();
-        MeshType::Pointer mesh = reader->GetOutput();
-        dataManager->AddDataset(mesh, fullpath.c_str());
-    }
-
-    ModelBuilderType::Pointer pcaModelBuilder = ModelBuilderType::New();
-    StatisticalModelType::Pointer model = pcaModelBuilder->BuildNewModel(dataManager->GetSampleDataStructure(), 0);
-    model->Save(modelname);
-
-
-
-}
-
-int main(int argc, char* argv[]) {
-
-	if (argc < 4) {
-		std::cout << "usage " << argv[0] << " referenceShape shapeDir modelname" << std::endl;
+	if (argc < 3) {
+		std::cout << "Usage " << argv[0] << " datadir modelname" << std::endl;
 		exit(-1);
 	}
+	std::string datadir(argv[1]);
+	std::string modelname(argv[2]);
 
-	const char* reference = argv[1];
-	const char* dir = argv[2];
-	const char* modelname = argv[3];
-    
-	buildShapeModel(reference, dir, modelname);
 
-	std::cout << "Model building is completed successfully." << std::endl;
+	// All the statismo classes have to be parameterized with the RepresenterType.
+	// For building a shape model with vtk, we use the vtkPolyDataRepresenter.
+	const unsigned Dimensions = 3;
+	typedef OpenInventorRepresenter::DatasetPointerType MeshType;
+	typedef OpenInventorRepresenter RepresenterType;
+	
+	typedef DataManager<RepresenterType> DataManagerType;
+	typedef PCAModelBuilder<RepresenterType> ModelBuilderType;
+	typedef StatisticalModel<RepresenterType> StatisticalModelType;
+
+	try {
+
+		// We create a new representer object. For the vtkPolyDataRepresenter, we have to set a reference
+		// and the alignmentType. The alignmenttype (which is here RIGID) determines how the dataset that we
+		// will use will later be aligned to the reference.
+		OpenInventorFile* reference = new OpenInventorFile;
+		reference->ReadIVFile(datadir +"/result000.iv");
+
+		//auto_ptr<RepresenterType> representer(RepresenterType::Create(reference, RepresenterType::RIGID));
+		auto_ptr<RepresenterType> representer(RepresenterType::Create());
+
+		// We create a datamanager and provide it with a pointer  to the representer
+		auto_ptr<DataManagerType> dataManager(DataManagerType::Create(representer.get()));
+
+
+		// Now we add our data to the data manager
+		// load the data and add it to the data manager. We take the first 17 hand shapes that we find in the data folder
+		for (unsigned i = 0; i < 10; i++) {
+
+			std::ostringstream ss;
+			ss << datadir +"/result00" << i << ".iv";
+			const std::string datasetFilename = ss.str();
+			OpenInventorFile* dataset = new OpenInventorFile;
+			dataset->ReadIVFile(datasetFilename);
+
+			// We provide the filename as a second argument.
+			// It will be written as metadata, and allows us to more easily figure out what we did later.
+			dataManager->AddDataset(dataset, datasetFilename);
+
+			// it is save to delete the dataset after it was added, as the datamanager direclty copies it.
+			dataset->Delete();
+		}
+
+		// To actually build a model, we need to create a model builder object.
+		// Calling the build model with a list of samples from the data manager, returns a new model.
+		// The second parameter to BuildNewModel is the variance of the noise on our data
+		auto_ptr<ModelBuilderType> modelBuilder(ModelBuilderType::Create());
+
+		auto_ptr<StatisticalModelType> model(modelBuilder->BuildNewModel(dataManager->GetSampleDataStructure(), 0.01));
+
+		// Once we have built the model, we can save it to disk.
+		model->Save(modelname);
+		std::cout << "Successfully saved shape model as " << modelname << std::endl;
+
+		reference->Delete();
+	}
+	catch (StatisticalModelException& e) {
+		std::cout << "Exception occured while building the shape model" << std::endl;
+		std::cout << e.what() << std::endl;
+	}
 }
-
