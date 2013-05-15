@@ -116,9 +116,9 @@ OpenInventorFile::ReadIVFile(std::string FileName)
 				SingleFace.clear();
 			}
 //			aMeshesElements.push_back(Faces);
-			this->mesh.m_faces.push_back(Faces);
+			this->mesh.m_faces = (Faces);
       }
 	}
 	
-}
+};
 	

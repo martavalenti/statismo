@@ -31,7 +31,7 @@ OpenInventorRepresenter::OpenInventorRepresenter(DatasetConstPointerType referen
 	   DomainType::DomainPointsListType ptList;
 	   for (unsigned i = 0; i < m_reference->GetNumberOfPoints(); i++) {
 		   double* d = m_reference->GetPoint(i);
-		   ptList.push_back(vtkPoint(d));
+		   ptList.push_back(SbVec3f(d));
 	   }
 	   m_domain = DomainType(ptList);
 }
@@ -86,15 +86,15 @@ inline
 OpenInventorRepresenter::DatasetPointerType
 OpenInventorRepresenter::DatasetToSample(DatasetConstPointerType _pd, DatasetInfo* notUsed) const
 {
-	/*assert(m_reference != 0);
+	assert(m_reference != 0);
 
-	vtkPolyData* reference = const_cast<vtkPolyData*>(this->m_reference);
-	vtkPolyData* pd = const_cast<vtkPolyData*>(_pd);
+	OpenInventorFile* reference = const_cast<OpenInventorFile*>(this->m_reference);
+	OpenInventorFile* pd = const_cast<OpenInventorFile*>(_pd);
 
 
-	vtkPolyData* alignedPd  = vtkPolyData::New();
+	OpenInventorFile* alignedPd  = new OpenInventorFile;
 
-	if (m_alignment != NONE) {
+/*	if (m_alignment != NONE) {
 
 		vtkLandmarkTransform* transform = vtkLandmarkTransform::New();
 		// we align all the dataset to the common reference
@@ -113,13 +113,13 @@ OpenInventorRepresenter::DatasetToSample(DatasetConstPointerType _pd, DatasetInf
 	  transform->Delete();
 
 	}
-	else {
+	else {*/
 	  // no alignment needed
-		alignedPd->DeepCopy(pd);
-	}
+	//	alignedPd->DeepCopy(pd);
+//	}
 
-*/	
-	alignedPd = _pd;
+	
+	alignedPd = const_cast<OpenInventorFile*>(_pd);
 	return alignedPd;
 }
 
@@ -128,7 +128,7 @@ statismo::VectorType
 OpenInventorRepresenter::SampleToSampleVector(DatasetConstPointerType _sample) const {
 	assert(m_reference != 0);
 
-	vtkPolyData* sample = const_cast<vtkPolyData*>(_sample);
+	OpenInventorFile* sample = const_cast<OpenInventorFile*>(_sample);
 
 	VectorType sampleVec = VectorType::Zero(m_reference->GetNumberOfPoints() * 3);
 	// TODO make this more efficient using SetVoidArray of vtk
@@ -149,13 +149,14 @@ OpenInventorRepresenter::SampleVectorToSample(const VectorType& sample) const
 
 	assert (m_reference != 0);
 
-	vtkPolyData* reference = const_cast<vtkPolyData*>(m_reference);
-	vtkPolyData* pd = vtkPolyData::New();
-	pd->DeepCopy(reference);
+	OpenInventorFile* reference = const_cast<OpenInventorFile*>(m_reference);
+	OpenInventorFile* pd = new OpenInventorFile;
+	//pd->DeepCopy(reference);
+	pd = const_cast<OpenInventorFile*>(reference);
 
-	vtkPoints* points = pd->GetPoints();
+	SbVec3f* points = pd->mesh.m_points;//GetPoints();
 	for (unsigned i = 0; i < reference->GetNumberOfPoints(); i++) {
-		vtkPoint pt;
+		SbVec3f pt;
 		for (unsigned d = 0; d < GetDimensions(); d++) {
 			unsigned idx = MapPointIdToInternalIdx(i, d);
 			pt[d] = sample(idx);
