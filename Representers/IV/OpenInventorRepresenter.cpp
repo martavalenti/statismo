@@ -30,8 +30,9 @@ OpenInventorRepresenter::OpenInventorRepresenter(DatasetConstPointerType referen
 	   // set the domain
 	   DomainType::DomainPointsListType ptList;
 	   for (unsigned i = 0; i < m_reference->GetNumberOfPoints(); i++) {
-		   double* d = m_reference->GetPoint(i);
-		   ptList.push_back(SbVec3f(d));
+//		   double* d = m_reference->GetPoint(i);
+		   SbVec3f d = m_reference->mesh.m_points[i];
+		   ptList.push_back(d);
 	   }
 	   m_domain = DomainType(ptList);
 }
@@ -154,23 +155,25 @@ OpenInventorRepresenter::SampleVectorToSample(const VectorType& sample) const
 	//pd->DeepCopy(reference);
 	pd = const_cast<OpenInventorFile*>(reference);
 
-	SbVec3f* points = pd->mesh.m_points;//GetPoints();
+	std::vector<SbVec3f> points = pd->mesh.m_points;//GetPoints();
 	for (unsigned i = 0; i < reference->GetNumberOfPoints(); i++) {
 		SbVec3f pt;
 		for (unsigned d = 0; d < GetDimensions(); d++) {
 			unsigned idx = MapPointIdToInternalIdx(i, d);
 			pt[d] = sample(idx);
 		}
-		points->SetPoint(i, pt.data());
+//		points->SetPoint(i, pt.data());
+		points[i] = pt;
 	}
 
 	return pd;
 }
 
+/*
 inline
 OpenInventorRepresenter::ValueType
 OpenInventorRepresenter::PointSampleFromSample(DatasetConstPointerType sample_, unsigned ptid) const {
-	vtkPolyData* sample = const_cast<DatasetPointerType>(sample_);
+	OpenInventorFile* sample = const_cast<DatasetPointerType>(sample_);
 	if (ptid >= sample->GetNumberOfPoints()) {
 		throw StatisticalModelException("invalid ptid provided to PointSampleFromSample");
 	}
@@ -199,14 +202,22 @@ OpenInventorRepresenter::PointSampleVectorToPointSample(const VectorType& v) con
 	}
 	return value;
 }
-
+*/
 
 
 inline
 unsigned
 OpenInventorRepresenter::GetPointIdForPoint(const PointType& pt) const {
 	assert (m_reference != 0);
-    return this->m_reference->FindPoint(const_cast<double*>(pt.data()));
+	int index = -1;
+	for (int i=0;i<m_reference->GetNumberOfPoints();i++)
+	{
+		if(m_reference->mesh.m_points[i]==pt)
+		{ index=i;}
+		else
+		{ std::cout<<"Could not find corresponding point"<<std::endl; }
+	}
+    return index;
 }
 
 inline

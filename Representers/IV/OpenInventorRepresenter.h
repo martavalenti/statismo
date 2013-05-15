@@ -83,11 +83,12 @@ public:
 
 	DatasetPointerType SampleVectorToSample(const statismo::VectorType& sample) const;
 
+	/*
 	ValueType PointSampleFromSample(DatasetConstPointerType sample, unsigned ptid) const;
 	statismo::VectorType PointSampleVectorToPointSample(const ValueType& v) const;
 
 	ValueType PointSampleToPointSampleVector(const statismo::VectorType& pointSample) const;
-
+	*/
 
 
 	static unsigned MapPointIdToInternalIdx(unsigned ptId, unsigned componentInd) 
@@ -102,9 +103,10 @@ public:
 
 private:
 
+	
 	static DatasetPointerType ReadDataset(const std::string& filename);
 	static void WriteDataset(const std::string& filename, DatasetConstPointerType pd);
-
+	
 
 	OpenInventorRepresenter(const std::string& reference);
 	OpenInventorRepresenter(const DatasetConstPointerType reference);
