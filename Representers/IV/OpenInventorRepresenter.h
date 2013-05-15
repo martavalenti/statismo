@@ -55,14 +55,16 @@ public:
 	typedef SbVec3f PointType;
 
 	typedef int ValueType;
-
+	typedef statismo::Domain<PointType> DomainType;
 
 	struct DatasetInfo {};
 	static std::string GetName() { return "OpenInventorRepresenter"; }
 	static unsigned GetDimensions() { return 3; }
 
-	static OpenInventorRepresenter* Create() {
-		return new OpenInventorRepresenter();
+	~OpenInventorRepresenter(); 
+
+	static OpenInventorRepresenter* Create(DatasetConstPointerType reference) {
+		return new OpenInventorRepresenter(reference);
 	}
 
 	static OpenInventorRepresenter* Load(const H5::CommonFG& fg);
@@ -95,7 +97,7 @@ public:
 
 	unsigned GetPointIdForPoint(const PointType& point) const;
 
-	void Save(const H5::CommonFG& fg);
+	void Save(const H5::CommonFG& fg) const;
 
 
 private:
@@ -103,6 +105,16 @@ private:
 	static DatasetPointerType ReadDataset(const std::string& filename);
 	static void WriteDataset(const std::string& filename, DatasetConstPointerType pd);
 
+
+	OpenInventorRepresenter(const std::string& reference);
+	OpenInventorRepresenter(const DatasetConstPointerType reference);
+	OpenInventorRepresenter(const OpenInventorRepresenter& orig);
+	OpenInventorRepresenter& operator=(const OpenInventorRepresenter& rhs);
+	
+
+	DatasetPointerType m_reference;
+
+	DomainType m_domain;
 };
 
 

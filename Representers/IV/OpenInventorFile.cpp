@@ -7,7 +7,7 @@
 #include <vector>
 #include <iostream>
 #include <fstream>
-#include "openinventorfile.h"
+#include "OpenInventorFile.h"
 
 void
 OpenInventorFile::ReadIVFile(std::string FileName)
@@ -60,7 +60,7 @@ OpenInventorFile::ReadIVFile(std::string FileName)
             }
  
             num_vectors =   (myCoords->point).getNum();
-			OpenInventorUtils::n_points = num_vectors;
+			this->mesh.n_points = num_vectors;
  
             // Get the starting point of the coordiantes
             Vec_coords =  (myCoords->point).getValues(0);
@@ -72,11 +72,11 @@ OpenInventorFile::ReadIVFile(std::string FileName)
  
       // assign it
       OutPoint = SurfacePoints;
-	  OpenInventorUtils::IVStruct.m_points = SurfacePoints;
+	  this->mesh.m_points = SurfacePoints;
 
 	  //search for faces
 	  SoIndexedFaceSet *myIndexFace;
-	  int num_vectors;
+
 	  const int32_t *Vec_face_coords;
   	  std::vector< int32_t> SingleFace;
 	  std::vector<std::vector< int32_t >> Faces;
@@ -116,9 +116,9 @@ OpenInventorFile::ReadIVFile(std::string FileName)
 				SingleFace.clear();
 			}
 //			aMeshesElements.push_back(Faces);
-			OpenInventorUtils::IVStruct.m_faces.push_back(Faces);
+			this->mesh.m_faces.push_back(Faces);
       }
 	}
-	}
+	
 }
 	

@@ -14,6 +14,8 @@
 #include <statismo/Domain.h>
 #include <statismo/CommonTypes.h>
 #include <H5Cpp.h>
+#include "OpenInventorRepresenter.h"
+#include "OpenInventorFile.h"
 
 using statismo::VectorType;
 using statismo::HDF5Utils;
@@ -22,7 +24,7 @@ using statismo::StatisticalModelException;
 inline
 OpenInventorRepresenter::OpenInventorRepresenter(DatasetConstPointerType reference)
 {
-	   m_reference = OpenInventorUtils::IVStruct::New();
+	   m_reference = new OpenInventorFile();
 	   m_reference = (const_cast<DatasetPointerType>(reference));
 
 	   // set the domain
@@ -43,7 +45,7 @@ OpenInventorRepresenter*
 OpenInventorRepresenter::Clone() const
 {
 	// this works since Create deep copies the reference
-	return Create();
+	return Create(m_reference);
 }
 
 inline
@@ -57,8 +59,8 @@ OpenInventorRepresenter::Load(const H5::CommonFG& fg) {
 	DatasetConstPointerType ref = ReadDataset(tmpfilename.c_str());
 	std::remove(tmpfilename.c_str());
 
-	int alignment = static_cast<AlignmentType>(HDF5Utils::readInt(fg, "./alignment"));
-	return OpenInventorRepresenter::Create(ref, AlignmentType(alignment));
+//	int alignment = static_cast<AlignmentType>(HDF5Utils::readInt(fg, "./alignment"));
+	return OpenInventorRepresenter::Create(ref);
 
 }
 
@@ -76,7 +78,7 @@ OpenInventorRepresenter::Save(const H5::CommonFG& fg) const {
 	HDF5Utils::dumpFileToHDF5(tmpfilename.c_str(), fg, "./reference" );
 
 	std::remove(tmpfilename.c_str());
-	HDF5Utils::writeInt(fg, "./alignment", m_alignment);
+	//HDF5Utils::writeInt(fg, "./alignment", m_alignment);
 
 }
 

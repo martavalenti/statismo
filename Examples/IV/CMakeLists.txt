@@ -23,6 +23,8 @@ link_directories( ${HDF5_LIBRARY_DIR} ${ITK_LIBRARY_DIRS} ${STATISMO_LIBRARY_DIR
 
 
 add_executable (itkBuildShapeModel buildShapeModel.cpp 
+	${STATISMO_DIR}/include/Representers/IV/OpenInventorFile.cpp 
+	${STATISMO_DIR}/include/Representers/IV/OpenInventorRepresenter.cpp
 	${SOURCE_FILES}
 	${INCLUDE_FILES}
 ) 

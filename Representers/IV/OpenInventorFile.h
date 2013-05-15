@@ -7,6 +7,7 @@
 #include <Inventor/nodes/SoIndexedFaceSet.h>
 #include <Inventor/nodes/SoShape.h>
 #include <string>
+#include <vector>
 
 class OpenInventorFile{
 public:
@@ -19,12 +20,15 @@ public:
 		unsigned int		n_points;
 	};
 
-	unsigned int GetNumberOfPoints(){ return n_points;};
+	IVStruct mesh;
+
+	unsigned int GetNumberOfPoints(){ return this->mesh.n_points;};
+	double* GetPoint(unsigned int index);
 
 	void ReadIVFile (std::string FileName);
 
 	void Delete() { delete this; };
 
-}
+};
 
 #endif

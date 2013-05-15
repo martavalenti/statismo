@@ -55,7 +55,7 @@ using std::auto_ptr;
 
 
 /*function... might want it in some class?*/
-int getdir (std::string dir, std::vector<std::string> &files, const std::string& extension=".*")
+/*int getdir (std::string dir, std::vector<std::string> &files, const std::string& extension=".*")
 {
 	itk::Directory::Pointer directory = itk::Directory::New();
 	directory->Load(dir.c_str());
@@ -67,7 +67,7 @@ int getdir (std::string dir, std::vector<std::string> &files, const std::string&
 	}
 
     return 0;
-}
+}*/
 
 
 
@@ -101,7 +101,7 @@ int main(int argc, char** argv) {
 		reference->ReadIVFile(datadir +"/result000.iv");
 
 		//auto_ptr<RepresenterType> representer(RepresenterType::Create(reference, RepresenterType::RIGID));
-		auto_ptr<RepresenterType> representer(RepresenterType::Create());
+		auto_ptr<RepresenterType> representer(RepresenterType::Create(reference));
 
 		// We create a datamanager and provide it with a pointer  to the representer
 		auto_ptr<DataManagerType> dataManager(DataManagerType::Create(representer.get()));
