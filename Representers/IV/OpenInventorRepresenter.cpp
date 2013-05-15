@@ -232,7 +232,7 @@ OpenInventorRepresenter::GetNumberOfPoints() const {
 inline
 OpenInventorRepresenter::DatasetPointerType
 OpenInventorRepresenter::ReadDataset(const std::string& filename) {
-	vtkPolyData* pd = vtkPolyData::New();
+	OpenInventorFile* pd = new OpenInventorFile;
 
     vtkPolyDataReader* reader = vtkPolyDataReader::New();
     reader->SetFileName(filename.c_str());

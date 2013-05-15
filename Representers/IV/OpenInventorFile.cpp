@@ -9,7 +9,7 @@
 #include <fstream>
 #include "OpenInventorFile.h"
 
-void
+int
 OpenInventorFile::ReadIVFile(std::string FileName)
 {
 	std::vector< SbVec3f >  OutPoint ;

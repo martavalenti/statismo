@@ -25,7 +25,7 @@ public:
 	unsigned int GetNumberOfPoints(){ return this->mesh.n_points;};
 	double* GetPoint(unsigned int index);
 
-	void ReadIVFile (std::string FileName);
+	int ReadIVFile (std::string FileName);
 
 	void Delete() { delete this; };
 
