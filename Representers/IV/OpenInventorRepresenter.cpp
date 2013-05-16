@@ -234,27 +234,36 @@ OpenInventorRepresenter::DatasetPointerType
 OpenInventorRepresenter::ReadDataset(const std::string& filename) {
 	OpenInventorFile* pd = new OpenInventorFile;
 
-    vtkPolyDataReader* reader = vtkPolyDataReader::New();
+	int result;
+	result = pd->ReadIVFile(filename);
+	if (result!=0)
+	{
+		throw StatisticalModelException((std::string("Could not read file ") + filename).c_str());
+	}
+/*    vtkPolyDataReader* reader = vtkPolyDataReader::New();
     reader->SetFileName(filename.c_str());
     reader->Update();
     if (reader->GetErrorCode() != 0) {
         throw StatisticalModelException((std::string("Could not read file ") + filename).c_str());
     }
     pd->ShallowCopy(reader->GetOutput());
-    reader->Delete();
+    reader->Delete();*/
     return pd;
 }
 
 inline
 void OpenInventorRepresenter::WriteDataset(const std::string& filename,DatasetConstPointerType pd) {
-    vtkPolyDataWriter* writer = vtkPolyDataWriter::New();
+
+	OpenInventorFile* reference = const_cast<OpenInventorFile*>(pd);
+	reference->WriteIVFile(filename);
+/*    vtkPolyDataWriter* writer = vtkPolyDataWriter::New();
     writer->SetFileName(filename.c_str());
     writer->SetInput(const_cast<vtkPolyData*>(pd));
     writer->Update();
     if (writer->GetErrorCode() != 0) {
         throw StatisticalModelException((std::string("Could not read file ") + filename).c_str());
     }
-    writer->Delete();
+    writer->Delete();*/
 }
 
 

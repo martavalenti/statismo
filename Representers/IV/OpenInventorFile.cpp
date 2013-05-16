@@ -14,6 +14,7 @@ OpenInventorFile::ReadIVFile(std::string FileName)
 {
 	std::vector< SbVec3f >  OutPoint ;
 	std::vector< std::vector< int32_t>> OutFace;
+	int result = 0;
 	
 	SoInput in;
 	SoSeparator* soSeparator;
@@ -21,6 +22,8 @@ OpenInventorFile::ReadIVFile(std::string FileName)
 	if (in.openFile(FileName.c_str()) == false)
 	{
 		std::cout << "Error in openening file";
+		result = 1;
+		return result;
 	}
 	else
 	{
@@ -46,6 +49,8 @@ OpenInventorFile::ReadIVFile(std::string FileName)
       if(mySearch.getPath()==NULL)
       {
             std::cout << "Error in reading path";
+			result = 2;
+			return result;
 			//break;
       }
  
@@ -56,6 +61,8 @@ OpenInventorFile::ReadIVFile(std::string FileName)
             if(!myCoords)
             {
                   std::cout << "Error in reading coordinates";
+				  result = 3;
+				  return result;
 				  //break;
             }
  
@@ -91,6 +98,8 @@ OpenInventorFile::ReadIVFile(std::string FileName)
       if(myFaceSearch.getPath()==NULL)
       {
             std::cout<< "error in reading faces path";
+			result = 4;
+			return result;
       }
  
       else
@@ -100,6 +109,8 @@ OpenInventorFile::ReadIVFile(std::string FileName)
             if(!myIndexFace)
             {
                   std::cout << "error in reading faces";
+				  result = 5;
+				  return result;
             }
  
             num_vectors =   (myIndexFace->coordIndex).getNum();
@@ -119,6 +130,12 @@ OpenInventorFile::ReadIVFile(std::string FileName)
 			this->mesh.m_faces = (Faces);
       }
 	}
-	
+	return result;
+};
+
+int
+OpenInventorFile::WriteIVFile(std::string FileName)
+{
+	return 0;
 };
 	

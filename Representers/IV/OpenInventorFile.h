@@ -26,6 +26,7 @@ public:
 	double* GetPoint(unsigned int index);
 
 	int ReadIVFile (std::string FileName);
+	int WriteIVFile (std::string FileName);
 
 	void Delete() { delete this; };
 
