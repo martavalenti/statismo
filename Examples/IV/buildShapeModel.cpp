@@ -122,7 +122,8 @@ int main(int argc, char** argv) {
 			dataManager->AddDataset(dataset, datasetFilename);
 
 			// it is save to delete the dataset after it was added, as the datamanager direclty copies it.
-			dataset->Delete();
+			//dataset->Delete();
+//			delete dataset;
 		}
 
 		// To actually build a model, we need to create a model builder object.
@@ -136,7 +137,8 @@ int main(int argc, char** argv) {
 		model->Save(modelname);
 		std::cout << "Successfully saved shape model as " << modelname << std::endl;
 
-		reference->Delete();
+		delete reference;
+//		reference->Delete();
 	}
 	catch (StatisticalModelException& e) {
 		std::cout << "Exception occured while building the shape model" << std::endl;

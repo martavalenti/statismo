@@ -31,7 +31,7 @@ public:
 	int ReadIVFile (std::string FileName);
 	int WriteIVFile (std::string FileName);
 
-	void Delete() { delete this; };
+	//void Delete() { delete this; };
 
 };
 

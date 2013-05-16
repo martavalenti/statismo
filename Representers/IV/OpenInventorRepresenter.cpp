@@ -28,13 +28,12 @@ using statismo::StatisticalModelException;
 //inline
 OpenInventorRepresenter::OpenInventorRepresenter(DatasetConstPointerType reference)
 {
-	OpenInventorFile* m_reference;
 	   m_reference = new OpenInventorFile();
 	   m_reference = (const_cast<DatasetPointerType>(reference));
 
 	   // set the domain
 	   DomainType::DomainPointsListType ptList;
-	   for (unsigned i = 0; i < m_reference->GetNumberOfPoints(); i++) {
+	   for (unsigned int i = 0; i < m_reference->GetNumberOfPoints(); i++) {
 //		   double* d = m_reference->GetPoint(i);
 		   SbVec3f d = m_reference->mesh.m_points[i];
 		   ptList.push_back(d);
@@ -44,7 +43,12 @@ OpenInventorRepresenter::OpenInventorRepresenter(DatasetConstPointerType referen
 
 
 OpenInventorRepresenter::~OpenInventorRepresenter() 
-{}
+{
+	/*if (m_reference != 0) {
+		m_reference->Delete();
+		m_reference = 0;
+	}*/
+}
 
 
 OpenInventorRepresenter*
@@ -280,7 +284,8 @@ void OpenInventorRepresenter::WriteDataset(const std::string& filename,DatasetCo
 
 
 void OpenInventorRepresenter::DeleteDataset(DatasetPointerType d) {
-    d->Delete();
+	delete d;
+//    d->Delete();
 }
 
 #endif // __OpenInventorRepresenter_CPP
