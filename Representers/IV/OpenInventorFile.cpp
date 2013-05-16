@@ -9,6 +9,24 @@
 #include <fstream>
 #include "OpenInventorFile.h"
 
+
+OpenInventorFile::OpenInventorFile()
+{
+	this->mesh.n_points=0;
+	this->mesh.m_faces.empty();
+	this->mesh.m_points.empty();
+};
+
+OpenInventorFile::~OpenInventorFile()
+{}
+
+SbVec3f OpenInventorFile::GetPoint(unsigned int index)
+{
+	SbVec3f result;
+	result = this->mesh.m_points[index];
+	return result;
+}
+
 int
 OpenInventorFile::ReadIVFile(std::string FileName)
 {

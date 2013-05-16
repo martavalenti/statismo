@@ -22,8 +22,11 @@ public:
 
 	IVStruct mesh;
 
+	OpenInventorFile();
+	~OpenInventorFile();
+
 	unsigned int GetNumberOfPoints(){ return this->mesh.n_points;};
-	double* GetPoint(unsigned int index);
+	SbVec3f GetPoint(unsigned int index);
 
 	int ReadIVFile (std::string FileName);
 	int WriteIVFile (std::string FileName);

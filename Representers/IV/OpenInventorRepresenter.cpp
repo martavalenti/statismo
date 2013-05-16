@@ -21,9 +21,14 @@ using statismo::VectorType;
 using statismo::HDF5Utils;
 using statismo::StatisticalModelException;
 
-inline
+//typedef OpenInventorFile* DatasetPointerType;
+//typedef const OpenInventorFile* DatasetConstPointerType;
+//typedef SbVec3f PointType;
+
+//inline
 OpenInventorRepresenter::OpenInventorRepresenter(DatasetConstPointerType reference)
 {
+	OpenInventorFile* m_reference;
 	   m_reference = new OpenInventorFile();
 	   m_reference = (const_cast<DatasetPointerType>(reference));
 
@@ -37,19 +42,21 @@ OpenInventorRepresenter::OpenInventorRepresenter(DatasetConstPointerType referen
 	   m_domain = DomainType(ptList);
 }
 
-inline
+
 OpenInventorRepresenter::~OpenInventorRepresenter() 
 {}
 
-inline
+
 OpenInventorRepresenter*
 OpenInventorRepresenter::Clone() const
 {
 	// this works since Create deep copies the reference
-	return Create(m_reference);
-}
+	OpenInventorRepresenter* clone;
+	clone = this->Create(m_reference);
+	return clone;
+} 
 
-inline
+//inline
 OpenInventorRepresenter*
 OpenInventorRepresenter::Load(const H5::CommonFG& fg) {
 
@@ -66,7 +73,7 @@ OpenInventorRepresenter::Load(const H5::CommonFG& fg) {
 }
 
 
-inline
+//inline
 void
 OpenInventorRepresenter::Save(const H5::CommonFG& fg) const {
 	using namespace H5;
@@ -83,7 +90,11 @@ OpenInventorRepresenter::Save(const H5::CommonFG& fg) const {
 
 }
 
-inline
+OpenInventorRepresenter* OpenInventorRepresenter::Create(DatasetConstPointerType reference) {
+		return new OpenInventorRepresenter(reference);
+	}
+
+//inline
 OpenInventorRepresenter::DatasetPointerType
 OpenInventorRepresenter::DatasetToSample(DatasetConstPointerType _pd, DatasetInfo* notUsed) const
 {
@@ -124,7 +135,7 @@ OpenInventorRepresenter::DatasetToSample(DatasetConstPointerType _pd, DatasetInf
 	return alignedPd;
 }
 
-inline
+//inline
 statismo::VectorType
 OpenInventorRepresenter::SampleToSampleVector(DatasetConstPointerType _sample) const {
 	assert(m_reference != 0);
@@ -143,7 +154,7 @@ OpenInventorRepresenter::SampleToSampleVector(DatasetConstPointerType _sample) c
 }
 
 
-inline
+//inline
 OpenInventorRepresenter::DatasetPointerType
 OpenInventorRepresenter::SampleVectorToSample(const VectorType& sample) const
 {
@@ -205,7 +216,7 @@ OpenInventorRepresenter::PointSampleVectorToPointSample(const VectorType& v) con
 */
 
 
-inline
+//inline
 unsigned
 OpenInventorRepresenter::GetPointIdForPoint(const PointType& pt) const {
 	assert (m_reference != 0);
@@ -220,7 +231,7 @@ OpenInventorRepresenter::GetPointIdForPoint(const PointType& pt) const {
     return index;
 }
 
-inline
+//inline
 unsigned
 OpenInventorRepresenter::GetNumberOfPoints() const {
 	assert (m_reference != 0);
@@ -229,7 +240,7 @@ OpenInventorRepresenter::GetNumberOfPoints() const {
 }
 
 
-inline
+//inline
 OpenInventorRepresenter::DatasetPointerType
 OpenInventorRepresenter::ReadDataset(const std::string& filename) {
 	OpenInventorFile* pd = new OpenInventorFile;
@@ -251,7 +262,7 @@ OpenInventorRepresenter::ReadDataset(const std::string& filename) {
     return pd;
 }
 
-inline
+//inline
 void OpenInventorRepresenter::WriteDataset(const std::string& filename,DatasetConstPointerType pd) {
 
 	OpenInventorFile* reference = const_cast<OpenInventorFile*>(pd);
@@ -267,7 +278,7 @@ void OpenInventorRepresenter::WriteDataset(const std::string& filename,DatasetCo
 }
 
 
-inline
+
 void OpenInventorRepresenter::DeleteDataset(DatasetPointerType d) {
     d->Delete();
 }

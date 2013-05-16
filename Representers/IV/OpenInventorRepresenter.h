@@ -63,9 +63,7 @@ public:
 
 	~OpenInventorRepresenter(); 
 
-	static OpenInventorRepresenter* Create(DatasetConstPointerType reference) {
-		return new OpenInventorRepresenter(reference);
-	}
+	static OpenInventorRepresenter* Create(DatasetConstPointerType reference);
 
 	static OpenInventorRepresenter* Load(const H5::CommonFG& fg);
 
@@ -108,10 +106,10 @@ private:
 	static void WriteDataset(const std::string& filename, DatasetConstPointerType pd);
 	
 
-	OpenInventorRepresenter(const std::string& reference);
-	OpenInventorRepresenter(const DatasetConstPointerType reference);
-	OpenInventorRepresenter(const OpenInventorRepresenter& orig);
-	OpenInventorRepresenter& operator=(const OpenInventorRepresenter& rhs);
+	//OpenInventorRepresenter(const std::string& reference);
+	OpenInventorRepresenter(DatasetConstPointerType reference);
+	//OpenInventorRepresenter(const OpenInventorRepresenter& orig);
+	//OpenInventorRepresenter& operator=(const OpenInventorRepresenter& rhs);
 	
 
 	DatasetPointerType m_reference;
