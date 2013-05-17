@@ -41,7 +41,7 @@ OpenInventorRepresenter::OpenInventorRepresenter(DatasetConstPointerType referen
 	   m_domain = DomainType(ptList);
 }
 
-
+//inline
 OpenInventorRepresenter::~OpenInventorRepresenter() 
 {
 	/*if (m_reference != 0) {
@@ -50,7 +50,7 @@ OpenInventorRepresenter::~OpenInventorRepresenter()
 	}*/
 }
 
-
+//inline
 OpenInventorRepresenter*
 OpenInventorRepresenter::Clone() const
 {
@@ -94,6 +94,7 @@ OpenInventorRepresenter::Save(const H5::CommonFG& fg) const {
 
 }
 
+//inline
 OpenInventorRepresenter* OpenInventorRepresenter::Create(DatasetConstPointerType reference) {
 		return new OpenInventorRepresenter(reference);
 	}
@@ -184,40 +185,43 @@ OpenInventorRepresenter::SampleVectorToSample(const VectorType& sample) const
 	return pd;
 }
 
-/*
-inline
+
+//inline
 OpenInventorRepresenter::ValueType
 OpenInventorRepresenter::PointSampleFromSample(DatasetConstPointerType sample_, unsigned ptid) const {
 	OpenInventorFile* sample = const_cast<DatasetPointerType>(sample_);
 	if (ptid >= sample->GetNumberOfPoints()) {
 		throw StatisticalModelException("invalid ptid provided to PointSampleFromSample");
 	}
-	return vtkPoint(sample->GetPoints()->GetPoint(ptid));
+	return sample->mesh.m_points[ptid];
+	//return vtkPoint(sample->GetPoints()->GetPoint(ptid));
 }
 
-inline
-statismo::VectorType
-OpenInventorRepresenter::PointSampleToPointSampleVector(const ValueType& v) const
+
+//inline
+statismo::VectorType 
+OpenInventorRepresenter::PointSampleVectorToPointSample(const ValueType& v) const
 {
-	VectorType vec(GetDimensions());
+	statismo::VectorType vec(GetDimensions());
 	for (unsigned i = 0; i < GetDimensions(); i++) {
-		vec(i) = v[i];
+		vec(i) =  v[i];
 	}
 	return vec;
 }
 
 
-inline
-OpenInventorRepresenter::ValueType
-OpenInventorRepresenter::PointSampleVectorToPointSample(const VectorType& v) const
+
+//inline
+OpenInventorRepresenter::ValueType 
+OpenInventorRepresenter::PointSampleToPointSampleVector(const statismo::VectorType& pointSample) const
 {
-	ValueType value;
+	OpenInventorRepresenter::ValueType  value;
 	for (unsigned i = 0; i < GetDimensions(); i++) {
-		value[i] = v(i);
+		value[i] = pointSample(i);
 	}
 	return value;
 }
-*/
+
 
 
 //inline
@@ -250,19 +254,12 @@ OpenInventorRepresenter::ReadDataset(const std::string& filename) {
 	OpenInventorFile* pd = new OpenInventorFile;
 
 	int result;
-	result = pd->ReadIVFile(filename);
+	result = pd->ReadIVDatasetFile(filename);
 	if (result!=0)
 	{
 		throw StatisticalModelException((std::string("Could not read file ") + filename).c_str());
 	}
-/*    vtkPolyDataReader* reader = vtkPolyDataReader::New();
-    reader->SetFileName(filename.c_str());
-    reader->Update();
-    if (reader->GetErrorCode() != 0) {
-        throw StatisticalModelException((std::string("Could not read file ") + filename).c_str());
-    }
-    pd->ShallowCopy(reader->GetOutput());
-    reader->Delete();*/
+
     return pd;
 }
 
@@ -271,21 +268,13 @@ void OpenInventorRepresenter::WriteDataset(const std::string& filename,DatasetCo
 
 	OpenInventorFile* reference = const_cast<OpenInventorFile*>(pd);
 	reference->WriteIVFile(filename);
-/*    vtkPolyDataWriter* writer = vtkPolyDataWriter::New();
-    writer->SetFileName(filename.c_str());
-    writer->SetInput(const_cast<vtkPolyData*>(pd));
-    writer->Update();
-    if (writer->GetErrorCode() != 0) {
-        throw StatisticalModelException((std::string("Could not read file ") + filename).c_str());
-    }
-    writer->Delete();*/
+
 }
 
 
-
+//inline
 void OpenInventorRepresenter::DeleteDataset(DatasetPointerType d) {
 	delete d;
-//    d->Delete();
 }
 
 #endif // __OpenInventorRepresenter_CPP

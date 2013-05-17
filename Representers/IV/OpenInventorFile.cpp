@@ -31,6 +31,27 @@ SbVec3f OpenInventorFile::GetPoint(unsigned int index)
 }
 
 int
+OpenInventorFile::ReadIVDatasetFile(std::string FileName)
+{	
+	SoInput in;
+	SoSeparator* soSeparator;
+	
+		
+	if (in.openFile(FileName.c_str()) == false)
+	{
+		std::cout << "Error in openening file";
+		return 1;
+	}
+	else
+	{
+		//soSeparator = SoDB::readAll(&in);
+		this->mesh.surface = SoDB::readAll(&in);
+		in.closeFile();
+	}
+	return 0;
+}
+
+int
 OpenInventorFile::ReadIVFile(std::string FileName)
 {
 	std::vector< SbVec3f >  OutPoint ;
@@ -49,8 +70,19 @@ OpenInventorFile::ReadIVFile(std::string FileName)
 	}
 	else
 	{
-		soSeparator = SoDB::readAll(&in);
+		
 		this->mesh.surface = SoDB::readAll(&in);
+	}
+
+	if (in.openFile(FileName.c_str()) == false)
+	{
+		std::cout << "Error in openening file";
+		result = 1;
+		return result;
+	}
+	else
+	{
+		soSeparator = SoDB::readAll(&in);
 		in.closeFile();
 
 		SoCoordinate3 *myCoords;
@@ -168,7 +200,7 @@ OpenInventorFile::WriteIVFile(std::string FileName)
 
 	myAction.getOutput()->openFile(FileName.c_str());
 	myAction.getOutput()->setBinary(FALSE);
-	myAction.apply(myShape);
+	myAction.apply(this->mesh.surface);
 	myAction.getOutput()->closeFile();
 	
 	return 0;

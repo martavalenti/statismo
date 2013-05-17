@@ -54,7 +54,7 @@ public:
 	typedef const OpenInventorFile* DatasetConstPointerType;
 	typedef SbVec3f PointType;
 
-	typedef int ValueType;
+	typedef SbVec3f ValueType;
 	typedef statismo::Domain<PointType> DomainType;
 
 	struct DatasetInfo {};
@@ -81,13 +81,12 @@ public:
 
 	DatasetPointerType SampleVectorToSample(const statismo::VectorType& sample) const;
 
-	/*
+	
 	ValueType PointSampleFromSample(DatasetConstPointerType sample, unsigned ptid) const;
 	statismo::VectorType PointSampleVectorToPointSample(const ValueType& v) const;
 
 	ValueType PointSampleToPointSampleVector(const statismo::VectorType& pointSample) const;
-	*/
-
+	
 
 	static unsigned MapPointIdToInternalIdx(unsigned ptId, unsigned componentInd) 
 	{
@@ -106,10 +105,10 @@ private:
 	static void WriteDataset(const std::string& filename, DatasetConstPointerType pd);
 	
 
-	//OpenInventorRepresenter(const std::string& reference);
+	OpenInventorRepresenter(const std::string& reference);
 	OpenInventorRepresenter(DatasetConstPointerType reference);
-	//OpenInventorRepresenter(const OpenInventorRepresenter& orig);
-	//OpenInventorRepresenter& operator=(const OpenInventorRepresenter& rhs);
+	OpenInventorRepresenter(const OpenInventorRepresenter& orig);
+	OpenInventorRepresenter& operator=(const OpenInventorRepresenter& rhs);
 	
 
 	DatasetPointerType m_reference;
