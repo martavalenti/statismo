@@ -19,6 +19,7 @@ public:
 		SoIndexedFaceSet	faces;*/
 		unsigned int		n_points;
 		unsigned int		n_faces;
+		SoSeparator*		surface;
 	};
 
 	IVStruct mesh;

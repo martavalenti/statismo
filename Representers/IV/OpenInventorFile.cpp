@@ -39,6 +39,7 @@ OpenInventorFile::ReadIVFile(std::string FileName)
 	
 	SoInput in;
 	SoSeparator* soSeparator;
+	
 		
 	if (in.openFile(FileName.c_str()) == false)
 	{
@@ -49,6 +50,7 @@ OpenInventorFile::ReadIVFile(std::string FileName)
 	else
 	{
 		soSeparator = SoDB::readAll(&in);
+		this->mesh.surface = SoDB::readAll(&in);
 		in.closeFile();
 
 		SoCoordinate3 *myCoords;
@@ -159,7 +161,8 @@ int
 OpenInventorFile::WriteIVFile(std::string FileName)
 {
 	SoSeparator* myShape = new SoSeparator;
-	myShape = this->shapeCreator();
+	//myShape = this->shapeCreator();
+	myShape = this->mesh.surface;
 
 	SoWriteAction myAction;
 
@@ -173,6 +176,7 @@ OpenInventorFile::WriteIVFile(std::string FileName)
 
 SoSeparator* OpenInventorFile::shapeCreator()
 {
+
 	int32_t indices[n_fc];
 	SbVec3f points[n_pt];
 
