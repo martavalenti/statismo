@@ -1,5 +1,6 @@
 #include <Inventor/nodes/SoCoordinate3.h>
 #include <Inventor/actions/SoSearchAction.h>
+#include <Inventor\actions\SoWriteAction.h>
 #include <Inventor/nodes/SoSeparator.h>
 #include <Inventor/nodes/SoIndexedFaceSet.h>
 #include <Inventor/nodes/SoShape.h>
@@ -9,6 +10,8 @@
 #include <fstream>
 #include "OpenInventorFile.h"
 
+#define n_pt 2562
+#define n_fc 20480
 
 OpenInventorFile::OpenInventorFile()
 {
@@ -132,6 +135,7 @@ OpenInventorFile::ReadIVFile(std::string FileName)
             }
  
             num_vectors =   (myIndexFace->coordIndex).getNum();
+			this->mesh.n_faces = num_vectors;
  
             // Get the starting point of the coordiantes
             Vec_face_coords =  (myIndexFace->coordIndex).getValues(0);
@@ -154,6 +158,48 @@ OpenInventorFile::ReadIVFile(std::string FileName)
 int
 OpenInventorFile::WriteIVFile(std::string FileName)
 {
+	SoSeparator* myShape = new SoSeparator;
+	myShape = this->shapeCreator();
+
+	SoWriteAction myAction;
+
+	myAction.getOutput()->openFile(FileName.c_str());
+	myAction.getOutput()->setBinary(FALSE);
+	myAction.apply(myShape);
+	myAction.getOutput()->closeFile();
+	
 	return 0;
 };
-	
+
+SoSeparator* OpenInventorFile::shapeCreator()
+{
+	int32_t indices[n_fc];
+	SbVec3f points[n_pt];
+
+	for (int i=0;i<this->mesh.n_points;i++)
+	{
+		points[i] = this->mesh.m_points[i];
+	}
+
+	for (int i=0;i<this->mesh.n_faces/4;i++)
+	{
+		indices[i*4] = this->mesh.m_faces[i][0];
+		indices[i*4+1] = this->mesh.m_faces[i][1];
+		indices[i*4+2] = this->mesh.m_faces[i][2];
+		indices[i*4+3] = this->mesh.m_faces[i][3];
+	}
+
+	SoSeparator *result = new SoSeparator;
+	result->ref();
+
+	SoCoordinate3 *myCoords = new SoCoordinate3;
+	myCoords->point.setValues(0, this->mesh.n_points,points);
+	result->addChild(myCoords);
+
+	SoIndexedFaceSet* myFaceSet = new SoIndexedFaceSet;
+	myFaceSet->coordIndex.setValues(0,this->mesh.n_faces,indices);
+	result->addChild(myFaceSet);
+
+	result->unrefNoDelete();
+	return result;
+}

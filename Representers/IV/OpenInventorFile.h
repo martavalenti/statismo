@@ -18,6 +18,7 @@ public:
 		/*SoCoordinate3		points;
 		SoIndexedFaceSet	faces;*/
 		unsigned int		n_points;
+		unsigned int		n_faces;
 	};
 
 	IVStruct mesh;
@@ -27,6 +28,7 @@ public:
 
 	unsigned int GetNumberOfPoints(){ return this->mesh.n_points;};
 	SbVec3f GetPoint(unsigned int index);
+	SoSeparator* shapeCreator(void);
 
 	int ReadIVFile (std::string FileName);
 	int WriteIVFile (std::string FileName);
