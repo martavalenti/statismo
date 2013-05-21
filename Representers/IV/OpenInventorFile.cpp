@@ -16,6 +16,7 @@
 OpenInventorFile::OpenInventorFile()
 {
 	this->mesh.n_points=0;
+	this->mesh.n_faces=0;
 	this->mesh.m_faces.empty();
 	this->mesh.m_points.empty();
 };
@@ -193,14 +194,14 @@ int
 OpenInventorFile::WriteIVFile(std::string FileName)
 {
 	SoSeparator* myShape = new SoSeparator;
-	//myShape = this->shapeCreator();
-	myShape = this->mesh.surface;
+	myShape = this->shapeCreator();
+	//myShape = this->mesh.surface;
 
 	SoWriteAction myAction;
 
 	myAction.getOutput()->openFile(FileName.c_str());
 	myAction.getOutput()->setBinary(FALSE);
-	myAction.apply(this->mesh.surface);
+	myAction.apply(myShape);
 	myAction.getOutput()->closeFile();
 	
 	return 0;
@@ -209,31 +210,26 @@ OpenInventorFile::WriteIVFile(std::string FileName)
 SoSeparator* OpenInventorFile::shapeCreator()
 {
 
-	int32_t indices[n_fc];
-	SbVec3f points[n_pt];
-
-	for (int i=0;i<this->mesh.n_points;i++)
-	{
-		points[i] = this->mesh.m_points[i];
-	}
-
-	for (int i=0;i<this->mesh.n_faces/4;i++)
-	{
-		indices[i*4] = this->mesh.m_faces[i][0];
-		indices[i*4+1] = this->mesh.m_faces[i][1];
-		indices[i*4+2] = this->mesh.m_faces[i][2];
-		indices[i*4+3] = this->mesh.m_faces[i][3];
-	}
-
 	SoSeparator *result = new SoSeparator;
 	result->ref();
 
+
+	// replace points on the referencee mesh
 	SoCoordinate3 *myCoords = new SoCoordinate3;
-	myCoords->point.setValues(0, this->mesh.n_points,points);
+	for (int i=0;i<this->mesh.n_points;i++)
+	{
+		myCoords->point.set1Value(i, this->mesh.m_points[i]);
+	}
 	result->addChild(myCoords);
 
 	SoIndexedFaceSet* myFaceSet = new SoIndexedFaceSet;
-	myFaceSet->coordIndex.setValues(0,this->mesh.n_faces,indices);
+	for (int i=0;i<this->mesh.n_faces/4;i++)
+	{
+		myFaceSet->coordIndex.set1Value(i*4,this->mesh.m_faces[i][0]);
+		myFaceSet->coordIndex.set1Value(i*4+1,this->mesh.m_faces[i][1]);
+		myFaceSet->coordIndex.set1Value(i*4+2,this->mesh.m_faces[i][2]);
+		myFaceSet->coordIndex.set1Value(i*4+3,this->mesh.m_faces[i][3]);
+	}
 	result->addChild(myFaceSet);
 
 	result->unrefNoDelete();

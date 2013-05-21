@@ -172,6 +172,7 @@ OpenInventorRepresenter::SampleVectorToSample(const VectorType& sample) const
 	pd = const_cast<OpenInventorFile*>(reference);
 
 	std::vector<SbVec3f> points = pd->mesh.m_points;//GetPoints();
+//	std::vector<SbVec3f> points;
 	for (unsigned i = 0; i < reference->GetNumberOfPoints(); i++) {
 		SbVec3f pt;
 		for (unsigned d = 0; d < GetDimensions(); d++) {
@@ -182,6 +183,7 @@ OpenInventorRepresenter::SampleVectorToSample(const VectorType& sample) const
 		points[i] = pt;
 	}
 
+	pd->mesh.m_points = points;
 	return pd;
 }
 
@@ -254,7 +256,7 @@ OpenInventorRepresenter::ReadDataset(const std::string& filename) {
 	OpenInventorFile* pd = new OpenInventorFile;
 
 	int result;
-	result = pd->ReadIVDatasetFile(filename);
+	result = pd->ReadIVFile(filename);
 	if (result!=0)
 	{
 		throw StatisticalModelException((std::string("Could not read file ") + filename).c_str());

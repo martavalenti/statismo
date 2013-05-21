@@ -96,6 +96,11 @@ int main(int argc, char** argv) {
 		coefficients(0) = 3;
 		OpenInventorFile* samplePC1 = model->DrawSample(coefficients);
 		samplePC1->WriteIVFile(resultdir+"samplePC1.iv");
+
+//		VectorType coefficients = VectorType::Zero(model->GetNumberOfPrincipalComponents());
+		coefficients(1) = 3;
+		OpenInventorFile* samplePC2 = model->DrawSample(coefficients);
+		samplePC2->WriteIVFile(resultdir+"samplePC2.iv");
 //		saveSample(samplePC1, resultdir, "samplePC1.vtk");
 
 
